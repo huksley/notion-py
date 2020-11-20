@@ -14,8 +14,8 @@ from notion.block.collection.basic import CollectionBlock
 from notion.settings import CHART_API_URL, TWITTER_API_URL
 
 HTMLRendererStyles = """
-<style>
-    .index > .children-list {
+<style type="text/css">
+.index > .children-list {
   margin-left: 0em;
 }
 
