@@ -105,7 +105,7 @@ class BaseHTMLRenderer:
         render_sub_pages: bool = True,
         render_with_styles: bool = False,
         render_linked_pages: bool = False,
-        render_table_pages_after_table: bool = False
+        render_table_pages_after_table: bool = False,
     ):
         """
         Attributes
