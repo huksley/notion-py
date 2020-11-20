@@ -105,7 +105,7 @@ class BaseHTMLRenderer:
         render_sub_pages: bool = True,
         render_with_styles: bool = False,
         render_linked_pages: bool = False,
-        render_table_pages_after_table: bool = False,
+        render_table_pages_after_table: bool = False
     ):
         """
         Attributes
@@ -338,6 +338,10 @@ class BaseHTMLRenderer:
     def render_image(self, block):
         attrs = {"alt": block.caption} if block.caption else {}
         src = block.display_source or block.source
+        path, query = (src.split("?") + [""])[:2]
+        if query == "":
+            query = "table=block&id=" + block.id
+            src = path + "?" + query
         return [img(src=src, **attrs)]
 
     def render_bookmark(self, **_):
