@@ -220,7 +220,7 @@ def remove_signed_prefix_as_needed(url: str) -> str:
         Non-prefixed URL.
     """
     if url.startswith(SIGNED_URL_PREFIX):
-        url = unquote_plus(url[len(S3_URL_PREFIX):])
+        url = unquote_plus(url[len(S3_URL_PREFIX) :])
 
     return url or ""
 
