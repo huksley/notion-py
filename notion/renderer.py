@@ -62,8 +62,15 @@ body {
 }
 
 .children-list p {
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  min-height: 1em;
+}
+
+.children-list ul li,
+.children-list ol li {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
 }
 
 .column-list {
