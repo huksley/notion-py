@@ -4,7 +4,7 @@ import os
 import re
 import time
 import uuid
-from typing import Union, Optional
+from typing import List, Union, Optional
 from urllib.parse import urljoin
 from zipfile import ZipFile
 
@@ -419,6 +419,7 @@ class NotionClient:
         CollectionView
             Found collectionView or None.
         """
+
         if url_or_id.startswith("http"):
             # if it's a URL for a database page,
             # try extracting the collection and view IDs
@@ -429,7 +430,13 @@ class NotionClient:
                 )
 
             collection_id, view_id = match.groups()
+            collection_id = self.get_record_data(
+                table="block",
+                url_or_id=collection_id,
+                force_refresh=force_refresh,
+            )["collection_id"]
             collection = self.get_collection(collection_id, force_refresh)
+
         else:
             view_id = url_or_id
 
@@ -440,7 +447,9 @@ class NotionClient:
                 )
 
         view = self.get_record_data(
-            "collection_view", view_id, force_refresh=force_refresh
+            table="collection_view",
+            url_or_id=view_id,
+            force_refresh=force_refresh,
         )
 
         if view:
@@ -809,7 +818,7 @@ class NotionClient:
 
         return data["results"]
 
-    def search_blocks(self, search: str, limit: int = 25) -> list:
+    def search_blocks(self, search: str, limit: int = 20) -> List[Block]:
         """
         Search for blocks.
 
@@ -821,7 +830,7 @@ class NotionClient:
 
         limit : int, optional
             Max number of blocks to return.
-            Defaults to 25.
+            Defaults to 20.
 
 
         Returns
@@ -829,13 +838,30 @@ class NotionClient:
         list
             List of blocks.
         """
+        # TODO: convert `filters` to some kind of built-in type
+        #       and make it passable / configurable
+
         data = {
+            "type": "BlocksInSpace",
             "query": search,
-            "table": "space",
-            "id": self.current_space.id,
             "limit": limit,
+            "sort": "Relevance",
+            "source": "quick_find",
+            "spaceId": self.current_space.id,
+            "filters": {
+                "isDeletedOnly": False,
+                "excludeTemplates": False,
+                "isNavigableOnly": False,
+                "requireEditPermissions": False,
+                "ancestors": [],
+                "createdBy": [],
+                "editedBy": [],
+                "lastEditedTime": {},
+                "createdTime": {},
+            },
         }
-        data = self.post("searchBlocks", data).json()
+
+        data = self.post("search", data).json()
         self._store.store_record_map(data)
 
         return [self.get_block(bid) for bid in data["results"]]

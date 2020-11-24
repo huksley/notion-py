@@ -122,7 +122,7 @@ def extract_id(source) -> Optional[str]:
         ID of the block or None.
     """
     if not isinstance(source, str):
-        return source.id
+        return source.get("id")
 
     if source.startswith(BASE_URL):
         source = (
@@ -196,9 +196,7 @@ def add_signed_prefix_as_needed(url: str, client=None) -> str:
         url = f"{SIGNED_URL_PREFIX}{quote_plus(path)}?{query}"
 
         if client:
-            new_url = client.session.head(url).headers.get("Location")
-            if new_url != None:
-                url = new_url
+            url = client.session.head(url).headers.get("Location", url)
 
     return url
 
@@ -244,7 +242,7 @@ def slugify(text: str) -> str:
     return _dash_slugify(text).replace("-", "_")
 
 
-def get_by_path(path: str, obj: Any, default: Any = None) -> dict:
+def get_by_path(path: str, obj: Any, default: Any = None):
     """
     Get value from object's key by dotted path (i.e. "path.to.some.key").
 
