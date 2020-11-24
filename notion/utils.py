@@ -196,9 +196,7 @@ def add_signed_prefix_as_needed(url: str, client=None) -> str:
         url = f"{SIGNED_URL_PREFIX}{quote_plus(path)}?{query}"
 
         if client:
-            new_url = client.session.head(url).headers.get("Location")
-            if new_url != None:
-                url = new_url
+            url = client.session.head(url).headers.get("Location", url)
 
     return url
 
